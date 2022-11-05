@@ -4,6 +4,7 @@ from conans import ConanFile, CMake, tools
 
 class LibtrngConan(ConanFile):
     name = "libtrng"
+    version = "4.22"
     license = "BSD"
     author = "Heiko Bauke"
     url = "https://www.numbercrunch.de/trng/"
