@@ -143,7 +143,7 @@ void UpdateCounters(RRRsetsItrTy B, RRRsetsItrTy E,
                     VertexCoverageVectorTy &vertexCoverage,
                     size_t num_threads) {
   for (; B != E; ++B) {
-#pragma omp parallel for num_threads(num_threads)
+#pragma omp parallel for num_threads(num_threads) if ((*B).size() > 1000)
     for (size_t j = 0; j < (*B).size(); ++j) {
       vertexCoverage[(*B)[j]] -= 1;
     }

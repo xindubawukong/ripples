@@ -4,6 +4,10 @@
 build/
 /.waf*
 *~
+edgelists*
+temp.txt
+output.txt
+logs/
 
 docs/api
 
