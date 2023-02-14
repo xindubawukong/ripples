@@ -7,7 +7,7 @@ build/
 edgelists*
 temp.txt
 output.txt
-logs/
+logs*/
 
 docs/api
 
