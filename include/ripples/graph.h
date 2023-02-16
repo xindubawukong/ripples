@@ -45,6 +45,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <iostream>
 #include <map>
 #include <numeric>
 #include <vector>
@@ -336,9 +337,25 @@ class Graph {
   //! \param end The end of the edge list.
   template <typename EdgeIterator>
   Graph(EdgeIterator begin, EdgeIterator end, bool renumbering) {
-    for (auto itr = begin; itr != end; ++itr) {
-      idMap[itr->source];
-      idMap[itr->destination];
+    std::cout << "graph construct start " << renumbering << std::endl;
+    if ((end - begin) > 100000000) {
+      size_t nn = 0;
+      for (auto itr = begin; itr != end; ++itr) {
+        nn = std::max(nn, (size_t) itr->source);
+        nn = std::max(nn, (size_t) itr->destination);
+      }
+      std::cout << "nn: " << std::endl;
+      for (size_t i = 0; i < nn; i++) {
+        if (i % 10000000 == 0) {
+          std::cout << "now: " << i << std::endl;
+        }
+        idMap[i];
+      }
+    } else {
+      for (auto itr = begin; itr != end; ++itr) {
+        idMap[itr->source];
+        idMap[itr->destination];
+      }
     }
 
     size_t num_nodes = renumbering ? idMap.size() : idMap.rbegin()->first + 1;
@@ -346,6 +363,8 @@ class Graph {
 
     index = new edge_type *[num_nodes + 1];
     edges = new edge_type[num_edges];
+
+    std::cout << "before" << std::endl;
 
 #pragma omp parallel for
     for (size_t i = 0; i < num_nodes + 1; ++i) {
@@ -356,6 +375,8 @@ class Graph {
     for (size_t i = 0; i < num_edges; ++i) {
       edges[i] = DestinationTy();
     }
+
+    std::cout << "after" << std::endl;
 
     numNodes = num_nodes;
     numEdges = num_edges;
@@ -388,6 +409,7 @@ class Graph {
           edge_type::template Create<DirectionPolicy>(itr, idMap);
       ++ptrEdge[DirectionPolicy::Source(itr, idMap)];
     }
+    std::cout << "graph construct end" << std::endl;
   }
 
   //! \brief Destuctor.
@@ -504,6 +526,7 @@ class Graph {
   //! Get the transposed graph.
   //! \return the transposed graph.
   transposed_type get_transpose() const {
+    std::cout << "get_transpose" << std::endl;
     using out_dest_type = typename transposed_type::edge_type;
     transposed_type G;
     G.numEdges = numEdges;

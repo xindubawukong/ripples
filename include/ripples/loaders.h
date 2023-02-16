@@ -87,10 +87,60 @@ std::vector<EdgeTy> load(const std::string &inputFile, const bool undirected,
   trng::uniform01_dist<float> probability;
 
   std::vector<EdgeTy> result;
+
+  if (inputFile.back() == 'n') {
+    std::cout << "load graph from " << inputFile << std::endl;
+    std::ifstream ifs(inputFile);
+    if (!ifs.is_open()) {
+      std::cerr << "Error: Cannot open file " << inputFile << '\n';
+      abort();
+    }
+    size_t n, m, sizes;
+    ifs.read(reinterpret_cast<char*>(&n), sizeof(size_t));
+    ifs.read(reinterpret_cast<char*>(&m), sizeof(size_t));
+    ifs.read(reinterpret_cast<char*>(&sizes), sizeof(size_t));
+    assert(sizes == (n + 1) * 8 + m * 4 + 3 * 8);
+
+    // graph.n = n;
+    // graph.m = m;
+    std::vector<uint64_t> offset(n + 1);
+    std::vector<uint32_t> edge(m);
+    ifs.read(reinterpret_cast<char*>(offset.data()), (n + 1) * 8);
+    ifs.read(reinterpret_cast<char*>(edge.data()), m * 4);
+    std::cout << "n: " << n << std::endl;
+    std::cout << "m: " << m << std::endl;
+    result.reserve(m);
+    for (typename EdgeTy::vertex_type u = 0; u < n; u++) {
+      if (u % 1000000 == 0) {
+        std::cout << "u: " << u << std::endl;
+      }
+      for (size_t j = offset[u]; j < offset[u + 1]; j++) {
+        typename EdgeTy::vertex_type v = edge[j];
+        auto weight = rand();
+        EdgeTy e = {u, v, weight};
+        result.emplace_back(e);
+      }
+    }
+    // graph.offset = sequence<EdgeId>(n + 1);
+    // graph.E = sequence<NodeId>(m);
+    // parallel_for(0, n + 1, [&](size_t i) { graph.offset[i] = offset[i]; });
+    // parallel_for(0, m, [&](size_t i) { graph.E[i] = edge[i]; });
+    if (ifs.peek() != EOF) {
+      std::cerr << "Error: Bad data\n";
+      abort();
+    }
+    ifs.close();
+    std::cout << "read done " << result.size() << std::endl;
+    return result;
+  }
+
   for (std::string line; std::getline(GFS, line); ++lineNumber) {
     if (line.empty()) continue;
     if (line.find('%') != std::string::npos) continue;
     if (line.find('#') != std::string::npos) continue;
+    if (lineNumber % 10000000 == 0) {
+      std::cout << "lineNumber: " << lineNumber << std::endl;
+    }
 
     std::stringstream SS(line);
 
@@ -241,8 +291,10 @@ GraphTy loadGraph_helper(ConfTy &CFG, PrngTy &PRNG) {
     using weight_type = typename GraphTy::edge_type::edge_weight;
     using edge_type = ripples::Edge<vertex_type, weight_type>;
     auto edgeList = ripples::loadEdgeList<edge_type>(CFG, PRNG);
+    std::cout << "edgeList done" << std::endl;
     GraphTy tmpG(edgeList.begin(), edgeList.end(), !CFG.disable_renumbering);
     G = std::move(tmpG);
+    std::cout << "move done" << std::endl;
   } else {
     std::ifstream binaryDump(CFG.IFileName, std::ios::binary);
     GraphTy tmpG(binaryDump);
