@@ -67,7 +67,7 @@ struct ForwardDirection {
   //! \return The source of the egde to be loaded in the graph.
   template <typename ItrTy, typename MapTy>
   static VertexTy Source(ItrTy itr, const MapTy &m) {
-    return m.find(itr->source)->second;
+    return itr->source;
   }
 
   //! \brief Edge Destination
@@ -78,7 +78,7 @@ struct ForwardDirection {
   //! \return The destination of the egde to be loaded in the graph.
   template <typename ItrTy, typename MapTy>
   static VertexTy Destination(ItrTy itr, const MapTy &m) {
-    return m.find(itr->destination)->second;
+    return itr->destination;
   }
 };
 
@@ -95,7 +95,7 @@ struct BackwardDirection {
   //! \return The source of the egde to be loaded in the graph.
   template <typename ItrTy, typename MapTy>
   static VertexTy Source(ItrTy itr, const MapTy &m) {
-    return m.find(itr->destination)->second;
+    return itr->destination;
   }
 
   //! \brief Edge Destination
@@ -106,7 +106,7 @@ struct BackwardDirection {
   //! \return The destination of the egde to be loaded in the graph.
   template <typename ItrTy, typename MapTy>
   static VertexTy Destination(ItrTy itr, const MapTy &m) {
-    return m.find(itr->source)->second;
+    return itr->source;
   }
 };
 
@@ -337,15 +337,16 @@ class Graph {
   //! \param end The end of the edge list.
   template <typename EdgeIterator>
   Graph(EdgeIterator begin, EdgeIterator end, bool renumbering) {
-    std::cout << "graph construct start " << renumbering << std::endl;
-    if ((end - begin) > 100000000) {
+    std::cout << "graph construct start, renumbering: " << renumbering << std::endl;
+    fast_mode = (end - begin) > 100000;
+    if (fast_mode) {
       size_t nn = 0;
       for (auto itr = begin; itr != end; ++itr) {
         nn = std::max(nn, (size_t) itr->source);
         nn = std::max(nn, (size_t) itr->destination);
       }
-      std::cout << "nn: " << std::endl;
-      for (size_t i = 0; i < nn; i++) {
+      std::cout << "nn: " << nn << std::endl;
+      for (size_t i = 0; i <= nn; i++) {
         if (i % 10000000 == 0) {
           std::cout << "now: " << i << std::endl;
         }
@@ -628,6 +629,8 @@ class Graph {
 
   size_t numNodes;
   size_t numEdges;
+
+  bool fast_mode = false;
 };
 
 template <typename BwdGraphTy, typename FwdGraphTy>
