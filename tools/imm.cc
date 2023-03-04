@@ -195,8 +195,7 @@ int main(int argc, char **argv) {
         std::cout << seeds[i] << " \n"[i == seeds.size() - 1];
       }
       auto end = std::chrono::high_resolution_clock::now();
-      R.Total = end - start - R.Total;
-      real_total = end - start;
+      R.Total = end - start;
     } else if (CFG.diffusionModel == "LT") {
       ripples::StreamingRRRGenerator<
           decltype(G), decltype(generator),
@@ -208,12 +207,11 @@ int main(int argc, char **argv) {
       seeds = IMM(G, CFG, 1, se, ripples::linear_threshold_tag{},
                   ripples::omp_parallel_tag{});
       auto end = std::chrono::high_resolution_clock::now();
-      R.Total = end - start - R.Total;
-      real_total = end - start;
+      R.Total = end - start;
     }
 
-    console->info("IMM Parallel : {}ms", R.Total.count());
-    console->info("IMM Parallel Real Total : {}ms\n", real_total.count());
+    console->info("select seeds: {} s", R.FindMostInfluentialSet.count() / 1000.0);
+    console->info("IMM total: {} s", R.Total.count() / 1000.0);
 
     size_t num_threads;
 #pragma omp single
