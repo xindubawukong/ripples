@@ -4,9 +4,10 @@ import subprocess
 
 
 def run_ripples(log_path, graph, eps, workers, w, iter):
-    n_threads = [192, 96, 48, 24, 12, 8, 4, 2, 1]
-    cores = ['0-191', '0-95', '0-95:2', '0-95:4', '0-47:4', '0-31:4', '0-15:4', '0-7:4', '0-3:4']
-    for i in range(len(n_threads)):
+    ruru = [7, 8]
+    n_threads = [192, 96, 48, 24, 16, 8, 4, 2, 1]
+    cores = ['0-191', '0-95', '0-95:2', '0-95:4', '0-95:6', '0-31:4', '0-15:4', '0-7:4', '0-3:4']
+    for i in ruru:
         n_thread = n_threads[i]
         core = cores[i]
         numa = 'numactl -i all' if n_thread > 1 else ''
@@ -22,22 +23,26 @@ def run_ripples(log_path, graph, eps, workers, w, iter):
         logfile = f'./{log_path}/{name}.txt'
         memfile = f'./{log_path}/{name}_mem.txt'
         resfile = f'./{log_path}/{name}_res.txt'
-        if os.path.exists(resfile):
+        finishfile = f'./{log_path}/{name}_finish.txt'
+        if os.path.exists(finishfile):
             continue
-        print(f'Runing ripples on {graph}, eps={eps}, workers={workers}, w={w}, n_thread={n_thread}, core={core}')
-        subprocess.call(
-            f'OMP_NUM_THREADS={n_thread} /usr/bin/time -v taskset -c {core} {numa} {command} 1>> {logfile} 2>> {memfile}', shell=True)
+        subprocess.call(f'rm -rf {logfile} {memfile} {resfile}', shell=True)
+        for round in range(1):
+            print(f'Runing ripples on {graph}, eps={eps}, workers={workers}, w={w}, n_thread={n_thread}, core={core}, round={round}')
+            subprocess.call(
+                f'OMP_NUM_THREADS={n_thread} /usr/bin/time -v taskset -c {core} {numa} {command} 1>> {logfile} 2>> {memfile}', shell=True)
         print(f'evaluating seeds influence on {graph}')
         subprocess.call(
             f'/home/xding9001/IM/general_cascade {graph_path} {logfile} -i {iter} -w {w} >> {resfile}', shell=True)
+        subprocess.call(f'echo finish >> {finishfile}', shell=True)
 
 
 if __name__ == '__main__':
-    path = 'logs_temp'
+    path = 'logs_0420'
     subprocess.call(f'mkdir -p {path}', shell=True)
 
     aa = [
-        ('HepPh_sym', 0.02, [2], 20000),
+        # ('HepPh_sym', 0.02, [2], 20000),
         # ('Epinions1_sym', 0.02, [4], 20000),
         # ('Slashdot_sym', 0.02, [8], 20000),
         # ('DBLP_sym', 0.02, [16], 20000),
@@ -46,12 +51,12 @@ if __name__ == '__main__':
         # ('soc-LiveJournal1_sym', 0.02, [16], 2000),
         # ('HT_5_sym', 0.2, [16], 20000),
         # ('Household.lines_5_sym', 0.2, [16], 20000),
-        # ('CHEM_5_sym', 0.2, [16], 20000),
+        # ('CHEM_5_sym', 0.2, [16], 2000),
         # ('GeoLifeNoScale_5_sym', 0.2, [16], 5000),
         # ('grid_1000_10000_sym', 0.2, [16], 20000),
         # ('grid_1000_10000_03_sym', 0.2, [16], 20000),
         # ('twitter_sym', 0.02, [16], 1000),
-        # ('Germany_sym', 0.2, [16], 20000),
+        ('Germany_sym', 0.2, [16], 20000),
         # ('RoadUSA_sym', 0.2, [16], 20000),
     ]
 
