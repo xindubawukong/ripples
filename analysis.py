@@ -11,10 +11,10 @@ def main():
         ('Youtube_sym', 0.02, [16], 5000),
         ('com-orkut_sym', 0.02, [16], 2000),
         ('soc-LiveJournal1_sym', 0.02, [16], 2000),
-        ('HT_5_sym', 0.2, [16], 20000),
-        ('Household.lines_5_sym', 0.2, [16], 20000),
-        ('CHEM_5_sym', 0.2, [16], 20000),
-        ('GeoLifeNoScale_5_sym', 0.2, [16], 5000),
+        # ('HT_5_sym', 0.2, [16], 20000),
+        # ('Household.lines_5_sym', 0.2, [16], 20000),
+        # ('CHEM_5_sym', 0.2, [16], 20000),
+        # ('GeoLifeNoScale_5_sym', 0.2, [16], 5000),
         # ('grid_1000_10000_sym', 0.2, [16], 20000),
         # ('grid_1000_10000_03_sym', 0.2, [16], 20000),
         # ('twitter_sym', 0.02, [16], 1000),
@@ -22,7 +22,7 @@ def main():
         # ('RoadUSA_sym', 0.2, [16], 20000),
     ]
     res = {}
-    log_path = 'logs_0304'
+    log_path = 'logs_0702'
     ff = open('temp.txt', 'w')
     for graph, w, workers_list, iter in aa:
         for workers in workers_list:
@@ -62,17 +62,18 @@ def main():
                 # print(mem_str, mem)
 
                 inf = list(filter(lambda x: len(x) > 0, infs.split('\n')))[-1]
+                inf = inf[inf.find(':') + 1:]
                 inf = float(inf)
                 # print(inf)
-                a[n_thread] = (time, select_time, time - select_time, mem, inf)
+                a[n_thread] = (time, time - select_time, select_time, mem, inf)
             if len(a) > 0:
-                id = 2
                 res = f'{graph}'
-                for n_thread in [192, 96, 48, 24, 12, 8, 4, 2, 1]:
-                    t = ''
-                    if n_thread in a:
-                        t = a[n_thread][id]
-                    res += ' ' + str(t)
+                for id in [0,1,2,3,4]:
+                    for n_thread in [192]:# , 96, 48, 24, 12, 8, 4, 2, 1]:
+                        t = ''
+                        if n_thread in a:
+                            t = a[n_thread][id]
+                        res += ' ' + str(t)
                 ff.write(res + '\n')
 
 

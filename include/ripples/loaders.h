@@ -68,6 +68,24 @@ struct weighted_edge_list_tsv {};
 
 namespace {
 
+inline uint64_t hash64(uint64_t u) {
+  uint64_t v = u * 3935559000370003845ul + 2691343689449507681ul;
+  v ^= v >> 21;
+  v ^= v << 37;
+  v ^= v >> 4;
+  v *= 4768777513237032717ul;
+  v ^= v << 20;
+  v ^= v >> 41;
+  v ^= v << 5;
+  return v;
+}
+
+double Uniform(size_t n, size_t u, size_t v, double l, double r) {
+  if (u > v) std::swap(u, v);
+  double p = 1.0 * hash64(hash64(hash64(n) + u + 1) + v + 1) / std::numeric_limits<uint64_t>::max();
+  return l + (r - l) * p;
+}
+
 //! Load an Edge List in TSV format and generate the weights.
 //!
 //! \tparam EdgeTy The type of edges.
@@ -204,6 +222,59 @@ std::vector<EdgeTy> load(const std::string &inputFile, const bool undirected,
   size_t lineNumber = 0;
 
   std::vector<EdgeTy> result;
+
+  if (inputFile.back() == 'n') {
+    std::cout << "load graph from " << inputFile << std::endl;
+    std::cout << "using Uniform weights" << std::endl;
+    std::ifstream ifs(inputFile);
+    if (!ifs.is_open()) {
+      std::cerr << "Error: Cannot open file " << inputFile << '\n';
+      abort();
+    }
+    size_t n, m, sizes;
+    ifs.read(reinterpret_cast<char*>(&n), sizeof(size_t));
+    ifs.read(reinterpret_cast<char*>(&m), sizeof(size_t));
+    ifs.read(reinterpret_cast<char*>(&sizes), sizeof(size_t));
+    assert(sizes == (n + 1) * 8 + m * 4 + 3 * 8);
+
+    // graph.n = n;
+    // graph.m = m;
+    std::vector<uint64_t> offset(n + 1);
+    std::vector<uint32_t> edge(m);
+    ifs.read(reinterpret_cast<char*>(offset.data()), (n + 1) * 8);
+    ifs.read(reinterpret_cast<char*>(edge.data()), m * 4);
+    std::cout << "n: " << n << std::endl;
+    std::cout << "m: " << m << std::endl;
+    std::vector<size_t> deg(n);
+    for (typename EdgeTy::vertex_type u = 0; u < n; u++) {
+      deg[u] = offset[u + 1] - offset[u];
+    }
+    result.reserve(m);
+    for (typename EdgeTy::vertex_type u = 0; u < n; u++) {
+      if (u % 1000000 == 0) {
+        std::cout << "u: " << u << std::endl;
+      }
+      for (size_t j = offset[u]; j < offset[u + 1]; j++) {
+        typename EdgeTy::vertex_type v = edge[j];
+        // float weight = Uniform(n, u, v, 0, 0.1);
+        float weight = 2.0 / (deg[u] + deg[v]);
+        EdgeTy e = {u, v, weight};
+        result.emplace_back(e);
+      }
+    }
+    // graph.offset = sequence<EdgeId>(n + 1);
+    // graph.E = sequence<NodeId>(m);
+    // parallel_for(0, n + 1, [&](size_t i) { graph.offset[i] = offset[i]; });
+    // parallel_for(0, m, [&](size_t i) { graph.E[i] = edge[i]; });
+    if (ifs.peek() != EOF) {
+      std::cerr << "Error: Bad data\n";
+      abort();
+    }
+    ifs.close();
+    std::cout << "read done " << result.size() << std::endl;
+    return result;
+  }
+
   for (std::string line; std::getline(GFS, line); ++lineNumber) {
     if (line.empty()) continue;
     if (line.find('%') != std::string::npos) continue;
