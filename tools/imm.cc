@@ -165,6 +165,10 @@ int main(int argc, char **argv) {
   console->info("Number of Nodes : {}", G.num_nodes());
   console->info("Number of Edges : {}", G.num_edges());
 
+  for (int round = 0; round < 2; round++) {
+
+  std::cout << "round: " << round << '\n';
+
   nlohmann::json executionLog;
 
   std::vector<typename GraphBwd::vertex_type> seeds;
@@ -248,6 +252,8 @@ int main(int argc, char **argv) {
     executionLog.push_back(experiment);
     perf << executionLog.dump(2);
   }
+
+  } // round
 
   return EXIT_SUCCESS;
 }

@@ -19,7 +19,7 @@ def run_ripples(log_path, graph, eps, workers, w, iter):
             graph_path = f'/data0/lwang323/graph/bin/{graph}.bin'
         # graph_path = f'./edgelists2/{graph}-sorted-edge-list.txt'
         command = f'./build/release/tools/imm -i {graph_path} -u --distribution normal --mean {p} --variance 0.0 --disable-renumbering -k {k} -d IC -e {eps} -o output.txt -p --seed-select-max-workers {workers}'
-        # command += ' -w'
+        command += ' -w'
         name = f'{graph}_eps_{eps}_workers_{workers}_nthreads_{n_thread}'
         logfile = f'./{log_path}/{name}.txt'
         memfile = f'./{log_path}/{name}_mem.txt'
@@ -39,21 +39,21 @@ def run_ripples(log_path, graph, eps, workers, w, iter):
 
 
 if __name__ == '__main__':
-    path = 'logs_0702_original'
+    path = 'logs_temp'
     subprocess.call(f'mkdir -p {path}', shell=True)
 
     aa = [
-        ('HepPh_sym', 0.02, [2], 20000),
-        ('Epinions1_sym', 0.02, [4], 20000),
-        ('Slashdot_sym', 0.02, [8], 20000),
-        ('DBLP_sym', 0.02, [16], 20000),
-        ('Youtube_sym', 0.02, [16], 5000),
-        ('com-orkut_sym', 0.02, [16], 2000),
-        ('soc-LiveJournal1_sym', 0.02, [16], 2000),
+        # ('HepPh_sym', 0.02, [2], 20000),
+        # ('Epinions1_sym', 0.02, [4], 20000),
+        # ('Slashdot_sym', 0.02, [8], 20000),
+        # ('DBLP_sym', 0.02, [16], 20000),
+        # ('Youtube_sym', 0.02, [16], 5000),
+        # ('com-orkut_sym', 0.02, [16], 2000),
+        # ('soc-LiveJournal1_sym', 0.02, [16], 2000),
         # ('HT_5_sym', 0.2, [16], 20000),
         # ('Household.lines_5_sym', 0.2, [16], 20000),
         # ('CHEM_5_sym', 0.2, [16], 2000),
-        # ('GeoLifeNoScale_5_sym', 0.2, [16], 5000),
+        ('GeoLifeNoScale_5_sym', 0.2, [16], 5000),
         # ('grid_1000_10000_sym', 0.2, [16], 20000),
         # ('grid_1000_10000_03_sym', 0.2, [16], 20000),
         # ('twitter_sym', 0.02, [16], 1000),

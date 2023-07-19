@@ -250,18 +250,23 @@ std::vector<EdgeTy> load(const std::string &inputFile, const bool undirected,
       deg[u] = offset[u + 1] - offset[u];
     }
     result.reserve(m);
+    long double tott = 0;
+    long long cntt = 0;
     for (typename EdgeTy::vertex_type u = 0; u < n; u++) {
       if (u % 1000000 == 0) {
         std::cout << "u: " << u << std::endl;
       }
       for (size_t j = offset[u]; j < offset[u + 1]; j++) {
         typename EdgeTy::vertex_type v = edge[j];
-        // float weight = Uniform(n, u, v, 0, 0.1);
+        // float weight = Uniform(n, u, v, 0.2, 0.2);
         float weight = 2.0 / (deg[u] + deg[v]);
         EdgeTy e = {u, v, weight};
+        tott += weight;
+        if (weight > 0.3) cntt++;
         result.emplace_back(e);
       }
     }
+    std::cout << "cntt: " << cntt << "  avg: " << tott / result.size() << std::endl;
     // graph.offset = sequence<EdgeId>(n + 1);
     // graph.E = sequence<NodeId>(m);
     // parallel_for(0, n + 1, [&](size_t i) { graph.offset[i] = offset[i]; });

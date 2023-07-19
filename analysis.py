@@ -11,18 +11,18 @@ def main():
         ('Youtube_sym', 0.02, [16], 5000),
         ('com-orkut_sym', 0.02, [16], 2000),
         ('soc-LiveJournal1_sym', 0.02, [16], 2000),
-        # ('HT_5_sym', 0.2, [16], 20000),
-        # ('Household.lines_5_sym', 0.2, [16], 20000),
-        # ('CHEM_5_sym', 0.2, [16], 20000),
-        # ('GeoLifeNoScale_5_sym', 0.2, [16], 5000),
-        # ('grid_1000_10000_sym', 0.2, [16], 20000),
-        # ('grid_1000_10000_03_sym', 0.2, [16], 20000),
+        ('HT_5_sym', 0.2, [16], 20000),
+        ('Household.lines_5_sym', 0.2, [16], 20000),
+        ('CHEM_5_sym', 0.2, [16], 20000),
+        ('GeoLifeNoScale_5_sym', 0.2, [16], 5000),
+        ('grid_1000_10000_sym', 0.2, [16], 20000),
+        ('grid_1000_10000_03_sym', 0.2, [16], 20000),
         # ('twitter_sym', 0.02, [16], 1000),
         # ('Germany_sym', 0.2, [16], 20000),
         # ('RoadUSA_sym', 0.2, [16], 20000),
     ]
     res = {}
-    log_path = 'logs_0702'
+    log_path = 'logs_0715_wic'
     ff = open('temp.txt', 'w')
     for graph, w, workers_list, iter in aa:
         for workers in workers_list:
