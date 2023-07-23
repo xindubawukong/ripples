@@ -39,7 +39,7 @@ def run_ripples(log_path, graph, eps, workers, w, iter):
 
 
 if __name__ == '__main__':
-    path = 'logs_temp'
+    path = 'logs_fix_wic'
     subprocess.call(f'mkdir -p {path}', shell=True)
 
     aa = [

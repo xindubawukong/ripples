@@ -158,6 +158,9 @@ auto FindMostInfluentialSet(const GraphTy &G, const ConfTy &CFG,
     result.push_back(element.first);
   }
 
+  std::cout << "uncovered: " << uncovered << std::endl;
+  std::cout << "tot: " << RRRsets.size() << std::endl;
+
   double f = double(RRRsets.size() - uncovered) / RRRsets.size();
 
   record.Counting.push_back(

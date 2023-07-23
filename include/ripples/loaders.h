@@ -262,7 +262,8 @@ std::vector<EdgeTy> load(const std::string &inputFile, const bool undirected,
         float weight = 2.0 / (deg[u] + deg[v]);
         EdgeTy e = {u, v, weight};
         tott += weight;
-        if (weight > 0.3) cntt++;
+        if (weight > 0.2) cntt++;
+        assert(weight >= 0 && weight <= 1);
         result.emplace_back(e);
       }
     }

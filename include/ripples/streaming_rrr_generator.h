@@ -44,6 +44,7 @@
 #include <atomic>
 #include <cassert>
 #include <cstdlib>
+#include <iostream>
 #include <memory>
 #include <sstream>
 #include <unordered_map>
@@ -168,8 +169,11 @@ class CPUWalkWorker : public WalkWorker<GraphTy, ItrTy> {
   static constexpr size_t batch_size_ = 32;
   PRNGeneratorTy rng_;
   trng::uniform_int_dist u_;
+  // std::vector<size_t> visited;
+  // size_t ts;
 
   void batch(ItrTy first, ItrTy last) {
+    // std::cout << "last - first: " << last - first << std::endl;
 #if CUDA_PROFILE
     auto start = std::chrono::high_resolution_clock::now();
 #endif
@@ -788,6 +792,9 @@ class StreamingRRRGenerator {
 #endif
 
     mpmc_head.store(0);
+    std::cout << "end - begin: " << end - begin << std::endl;
+    std::cout << "num_cpu_workers_: " << num_cpu_workers_ << std::endl;
+    std::cout << "num_gpu_workers_: " << num_gpu_workers_ << std::endl;
 
 #pragma omp parallel num_threads(num_cpu_workers_ + num_gpu_workers_)
     {

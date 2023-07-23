@@ -183,6 +183,10 @@ void GenerateRRRSets(GraphTy &G, PRNGeneratorTy &generator,
                      ExecRecordTy &,
                      diff_model_tag &&model_tag,
                      sequential_tag &&ex_tag) {
+  // static std::vector<size_t> visited;
+  // static size_t ts = 0;
+  // visited.resize(G.num_nodes());
+
   trng::uniform_int_dist start(0, G.num_nodes());
 
   for (auto itr = begin; itr < end; ++itr) {

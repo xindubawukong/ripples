@@ -165,7 +165,7 @@ int main(int argc, char **argv) {
   console->info("Number of Nodes : {}", G.num_nodes());
   console->info("Number of Edges : {}", G.num_edges());
 
-  for (int round = 0; round < 2; round++) {
+  for (int round = 0; round < 1; round++) {
 
   std::cout << "round: " << round << '\n';
 

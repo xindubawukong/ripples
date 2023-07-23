@@ -591,6 +591,8 @@ class StreamingFindMostInfluential {
     }
 
     double f = double(RRRsets_.size() - uncovered) / RRRsets_.size();
+    std::cout << "uncovered: " << uncovered << std::endl;
+    std::cout << "tot: " << RRRsets_.size() << std::endl;
 
     omp_set_max_active_levels(1);
 

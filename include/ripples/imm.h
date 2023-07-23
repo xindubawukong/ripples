@@ -45,6 +45,7 @@
 
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <unordered_map>
 #include <vector>
@@ -191,11 +192,14 @@ auto Sampling(const GraphTy &G, const ConfTy &CFG, double l,
   auto start = std::chrono::high_resolution_clock::now();
   size_t thetaPrime = 0;
   for (ssize_t x = 1; x < std::log2(G.num_nodes()); ++x) {
+    std::cout << "\nx: " << x << std::endl;
     // Equation 9
     ssize_t thetaPrime = ThetaPrime(x, epsilonPrime, l, k, G.num_nodes(),
                                     std::forward<execution_tag>(ex_tag));
+    std::cout << "thetaPrime: " << thetaPrime << std::endl;
 
     size_t delta = thetaPrime - RR.size();
+    std::cout << "delta: " << delta << std::endl;
     record.ThetaPrimeDeltas.push_back(delta);
 
     auto timeRRRSets = measure<>::exec_time([&]() {
@@ -209,6 +213,12 @@ auto Sampling(const GraphTy &G, const ConfTy &CFG, double l,
     });
     record.ThetaEstimationGenerateRRR.push_back(timeRRRSets);
 
+    std::cout << "timeRRRSets: " << std::chrono::duration_cast<std::chrono::microseconds>(timeRRRSets).count() / 1000000.0 << std::endl;
+    size_t tmp = 0;
+    for (auto rrs : RR) tmp += rrs.size();
+    std::cout << "tmp: " << tmp << "  RR.size(): " << RR.size() << std::endl;
+    std::cout << "avg rrs size: " << 1.0 * tmp / RR.size() << std::endl;
+
     double f;
 
     auto timeMostInfluential = measure<>::exec_time([&]() {
@@ -218,6 +228,8 @@ auto Sampling(const GraphTy &G, const ConfTy &CFG, double l,
 
       f = S.first;
     });
+    std::cout << "f: " << f << std::endl;
+    std::cout << "timeMostInfluential: " << std::chrono::duration_cast<std::chrono::microseconds>(timeMostInfluential).count() / 1000000.0 << std::endl;
 
     record.ThetaEstimationMostInfluential.push_back(timeMostInfluential);
 
@@ -407,9 +419,11 @@ auto IMM(const GraphTy &G, const ConfTy &CFG, double l, GeneratorTy &gen,
 
   l = l * (1 + 1 / std::log2(G.num_nodes()));
 
+  std::cout << "start sample" << std::endl;
   auto R =
       Sampling(G, CFG, l, gen, record, std::forward<diff_model_tag>(model_tag),
                std::forward<omp_parallel_tag>(ex_tag));
+  std::cout << "end sample" << std::endl;
 
 #if CUDA_PROFILE
   auto logst = spdlog::stdout_color_st("IMM-profile");
