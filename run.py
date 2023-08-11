@@ -3,12 +3,14 @@ import re
 import subprocess
 
 
-def run_ripples(log_path, graph, eps, workers, w, iter):
-    ruru = [0]
+def run_ripples(log_path, graph, threads, eps, workers, w, iter):
+    ruru = [0,1,2,3,4,5,6,7,8]
     n_threads = [192, 96, 48, 24, 16, 8, 4, 2, 1]
     cores = ['0-191', '0-95', '0-95:2', '0-95:4', '0-95:6', '0-31:4', '0-15:4', '0-7:4', '0-3:4']
     for i in ruru:
         n_thread = n_threads[i]
+        if n_thread != threads:
+            continue
         core = cores[i]
         numa = 'numactl -i all' if n_thread > 1 else ''
         workers = min(workers, n_thread)
@@ -28,7 +30,7 @@ def run_ripples(log_path, graph, eps, workers, w, iter):
         if os.path.exists(finishfile):
             continue
         subprocess.call(f'rm -rf {logfile} {memfile} {resfile}', shell=True)
-        for round in range(1):
+        for round in range(10):
             print(f'Runing ripples on {graph}, eps={eps}, workers={workers}, w={w}, n_thread={n_thread}, core={core}, round={round}')
             subprocess.call(
                 f'OMP_NUM_THREADS={n_thread} /usr/bin/time -v taskset -c {core} {numa} {command} 1>> {logfile} 2>> {memfile}', shell=True)
@@ -39,21 +41,21 @@ def run_ripples(log_path, graph, eps, workers, w, iter):
 
 
 if __name__ == '__main__':
-    path = 'logs_fix_wic'
+    path = 'logs_tttt'
     subprocess.call(f'mkdir -p {path}', shell=True)
 
     aa = [
-        # ('HepPh_sym', 0.02, [2], 20000),
-        # ('Epinions1_sym', 0.02, [4], 20000),
-        # ('Slashdot_sym', 0.02, [8], 20000),
-        # ('DBLP_sym', 0.02, [16], 20000),
-        # ('Youtube_sym', 0.02, [16], 5000),
-        # ('com-orkut_sym', 0.02, [16], 2000),
-        # ('soc-LiveJournal1_sym', 0.02, [16], 2000),
-        # ('HT_5_sym', 0.2, [16], 20000),
-        # ('Household.lines_5_sym', 0.2, [16], 20000),
-        # ('CHEM_5_sym', 0.2, [16], 2000),
-        ('GeoLifeNoScale_5_sym', 0.2, [16], 5000),
+        # ('HepPh_sym', 96, 0.02, [2], 20000),
+        # ('Epinions1_sym', 16, 0.02, [4], 20000),
+        # ('Slashdot_sym', 8, 0.02, [8], 20000),
+        # ('DBLP_sym', 8, 0.02, [16], 20000),
+        # ('Youtube_sym', 8, 0.02, [16], 5000),
+        # ('com-orkut_sym', 192, 0.02, [16], 2000),
+        # ('soc-LiveJournal1_sym', 192, 0.02, [16], 2000),
+        # ('HT_5_sym', 8, 0.2, [16], 20000),
+        # ('Household.lines_5_sym', 8, 0.2, [16], 20000),
+        # ('CHEM_5_sym', 8, 0.2, [16], 2000),
+        # ('GeoLifeNoScale_5_sym', 16, 0.2, [16], 5000),
         # ('grid_1000_10000_sym', 0.2, [16], 20000),
         # ('grid_1000_10000_03_sym', 0.2, [16], 20000),
         # ('twitter_sym', 0.02, [16], 1000),
@@ -62,7 +64,7 @@ if __name__ == '__main__':
     ]
 
     for eps in [0.5]:
-        for graph, w, workers_list, iter in aa:
+        for graph, threads, w, workers_list, iter in aa:
             for workers in workers_list:
-                run_ripples(log_path=path, graph=graph,
+                run_ripples(log_path=path, graph=graph, threads=threads,
                             eps=eps, workers=workers, w=w, iter=iter)

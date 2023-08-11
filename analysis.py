@@ -22,13 +22,13 @@ def main():
         # ('RoadUSA_sym', 0.2, [16], 20000),
     ]
     res = {}
-    log_path = 'logs_0715_wic'
+    log_path = 'logs_original_wic'
     ff = open('temp.txt', 'w')
     for graph, w, workers_list, iter in aa:
         for workers in workers_list:
             eps = 0.5
             a = {}
-            for n_thread in [192, 96, 48, 24, 12, 8, 4, 2, 1]:
+            for n_thread in [192, 96, 48, 24, 16, 8, 4, 2, 1]:
                 name = f'{graph}_eps_{eps}_workers_{min(workers, n_thread)}_nthreads_{n_thread}'
                 logfile = f'./{log_path}/{name}.txt'
                 memfile = f'./{log_path}/{name}_mem.txt'
@@ -69,11 +69,9 @@ def main():
             if len(a) > 0:
                 res = f'{graph}'
                 for id in [0,1,2,3,4]:
-                    for n_thread in [192]:# , 96, 48, 24, 12, 8, 4, 2, 1]:
-                        t = ''
+                    for n_thread in [192, 96, 48, 24, 16, 8, 4, 2, 1]:
                         if n_thread in a:
-                            t = a[n_thread][id]
-                        res += ' ' + str(t)
+                            res += ' ' + str(a[n_thread][id])
                 ff.write(res + '\n')
 
 
