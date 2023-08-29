@@ -214,10 +214,10 @@ auto Sampling(const GraphTy &G, const ConfTy &CFG, double l,
     record.ThetaEstimationGenerateRRR.push_back(timeRRRSets);
 
     std::cout << "timeRRRSets: " << std::chrono::duration_cast<std::chrono::microseconds>(timeRRRSets).count() / 1000000.0 << std::endl;
-    size_t tmp = 0;
-    for (auto rrs : RR) tmp += rrs.size();
-    std::cout << "tmp: " << tmp << "  RR.size(): " << RR.size() << std::endl;
-    std::cout << "avg rrs size: " << 1.0 * tmp / RR.size() << std::endl;
+    // size_t tmp = 0;
+    // for (auto rrs : RR) tmp += rrs.size();
+    // std::cout << "tmp: " << tmp << "  RR.size(): " << RR.size() << std::endl;
+    // std::cout << "avg rrs size: " << 1.0 * tmp / RR.size() << std::endl;
 
     double f;
 

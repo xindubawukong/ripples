@@ -258,8 +258,8 @@ std::vector<EdgeTy> load(const std::string &inputFile, const bool undirected,
       }
       for (size_t j = offset[u]; j < offset[u + 1]; j++) {
         typename EdgeTy::vertex_type v = edge[j];
-        float weight = Uniform(n, u, v, 0, 0.02);
-        // float weight = 2.0 / (deg[u] + deg[v]);
+        // float weight = Uniform(n, u, v, 0.1, 0.3);
+        float weight = 2.0 / (deg[u] + deg[v]);
         EdgeTy e = {u, v, weight};
         tott += weight;
         if (weight > 0.2) cntt++;

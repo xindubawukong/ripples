@@ -3,14 +3,12 @@ import re
 import subprocess
 
 
-def run_ripples(log_path, graph, threads, eps, workers, w, iter):
-    ruru = [0,1,2,3,4,5,6,7,8]
+def run_ripples(log_path, graph, best_threads, eps, workers, w, iter):
+    ruru = [0,1]
     n_threads = [192, 96, 48, 24, 16, 8, 4, 2, 1]
     cores = ['0-191', '0-95', '0-95:2', '0-95:4', '0-95:6', '0-31:4', '0-15:4', '0-7:4', '0-3:4']
     for i in ruru:
         n_thread = n_threads[i]
-        if n_thread != threads:
-            continue
         core = cores[i]
         numa = 'numactl -i all' if n_thread > 1 else ''
         workers = min(workers, n_thread)
@@ -30,7 +28,7 @@ def run_ripples(log_path, graph, threads, eps, workers, w, iter):
         if os.path.exists(finishfile):
             continue
         subprocess.call(f'rm -rf {logfile} {memfile} {resfile}', shell=True)
-        for round in range(10):
+        for round in range(1):
             print(f'Runing ripples on {graph}, eps={eps}, workers={workers}, w={w}, n_thread={n_thread}, core={core}, round={round}')
             subprocess.call(
                 f'OMP_NUM_THREADS={n_thread} /usr/bin/time -v taskset -c {core} {numa} {command} 1>> {logfile} 2>> {memfile}', shell=True)
@@ -41,7 +39,7 @@ def run_ripples(log_path, graph, threads, eps, workers, w, iter):
 
 
 if __name__ == '__main__':
-    path = 'logs_tttt'
+    path = 'logs_original_wic'
     subprocess.call(f'mkdir -p {path}', shell=True)
 
     aa = [
@@ -59,12 +57,12 @@ if __name__ == '__main__':
         # ('grid_1000_10000_sym', 0.2, [16], 20000),
         # ('grid_1000_10000_03_sym', 0.2, [16], 20000),
         # ('twitter_sym', 0.02, [16], 1000),
-        # ('Germany_sym', 0.2, [16], 20000),
-        # ('RoadUSA_sym', 0.2, [16], 20000),
+        ('Germany_sym', 0.2, [16], 20000),
+        ('RoadUSA_sym', 0.2, [16], 20000),
     ]
 
     for eps in [0.5]:
-        for graph, threads, w, workers_list, iter in aa:
+        for graph, w, workers_list, iter in aa:
             for workers in workers_list:
-                run_ripples(log_path=path, graph=graph, threads=threads,
+                run_ripples(log_path=path, graph=graph, best_threads=1,
                             eps=eps, workers=workers, w=w, iter=iter)

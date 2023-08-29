@@ -4,22 +4,22 @@ import os
 
 def main():
     aa = [
-        ('HepPh_sym', 0.02, [2], 20000),
-        ('Epinions1_sym', 0.02, [4], 20000),
-        ('Slashdot_sym', 0.02, [8], 20000),
-        ('DBLP_sym', 0.02, [16], 20000),
-        ('Youtube_sym', 0.02, [16], 5000),
-        ('com-orkut_sym', 0.02, [16], 2000),
-        ('soc-LiveJournal1_sym', 0.02, [16], 2000),
-        ('HT_5_sym', 0.2, [16], 20000),
-        ('Household.lines_5_sym', 0.2, [16], 20000),
-        ('CHEM_5_sym', 0.2, [16], 20000),
-        ('GeoLifeNoScale_5_sym', 0.2, [16], 5000),
-        ('grid_1000_10000_sym', 0.2, [16], 20000),
-        ('grid_1000_10000_03_sym', 0.2, [16], 20000),
+        # ('HepPh_sym', 0.02, [2], 20000),
+        # ('Epinions1_sym', 0.02, [4], 20000),
+        # ('Slashdot_sym', 0.02, [8], 20000),
+        # ('DBLP_sym', 0.02, [16], 20000),
+        # ('Youtube_sym', 0.02, [16], 5000),
+        # ('com-orkut_sym', 0.02, [16], 2000),
+        # ('soc-LiveJournal1_sym', 0.02, [16], 2000),
+        # ('HT_5_sym', 0.2, [16], 20000),
+        # ('Household.lines_5_sym', 0.2, [16], 20000),
+        # ('CHEM_5_sym', 0.2, [16], 20000),
+        # ('GeoLifeNoScale_5_sym', 0.2, [16], 5000),
+        # ('grid_1000_10000_sym', 0.2, [16], 20000),
+        # ('grid_1000_10000_03_sym', 0.2, [16], 20000),
         # ('twitter_sym', 0.02, [16], 1000),
-        # ('Germany_sym', 0.2, [16], 20000),
-        # ('RoadUSA_sym', 0.2, [16], 20000),
+        ('Germany_sym', 0.2, [16], 20000),
+        ('RoadUSA_sym', 0.2, [16], 20000),
     ]
     res = {}
     log_path = 'logs_original_wic'
@@ -69,7 +69,7 @@ def main():
             if len(a) > 0:
                 res = f'{graph}'
                 for id in [0,1,2,3,4]:
-                    for n_thread in [192, 96, 48, 24, 16, 8, 4, 2, 1]:
+                    for n_thread in [192]:#, 96, 48, 24, 16, 8, 4, 2, 1]:
                         if n_thread in a:
                             res += ' ' + str(a[n_thread][id])
                 ff.write(res + '\n')
