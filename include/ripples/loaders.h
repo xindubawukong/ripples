@@ -106,6 +106,8 @@ std::vector<EdgeTy> load(const std::string &inputFile, const bool undirected,
 
   std::vector<EdgeTy> result;
 
+  std::cout << "loading an unweighted graph" << std::endl;
+
   if (inputFile.back() == 'n') {
     std::cout << "load graph from " << inputFile << std::endl;
     std::ifstream ifs(inputFile);
@@ -222,6 +224,8 @@ std::vector<EdgeTy> load(const std::string &inputFile, const bool undirected,
   size_t lineNumber = 0;
 
   std::vector<EdgeTy> result;
+
+  std::cout << "loading a weighted edge list" << std::endl;
 
   if (inputFile.back() == 'n') {
     std::cout << "load graph from " << inputFile << std::endl;
