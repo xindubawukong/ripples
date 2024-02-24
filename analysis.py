@@ -4,27 +4,27 @@ import os
 
 def main():
     aa = [
-        # ('HepPh_sym', 0.02, [2], 20000),
-        # ('Epinions1_sym', 0.02, [4], 20000),
-        # ('Slashdot_sym', 0.02, [8], 20000),
-        # ('DBLP_sym', 0.02, [16], 20000),
-        # ('Youtube_sym', 0.02, [16], 5000),
-        # ('com-orkut_sym', 0.02, [16], 2000),
-        # ('soc-LiveJournal1_sym', 0.02, [16], 2000),
-        # ('HT_5_sym', 0.2, [16], 20000),
-        # ('Household.lines_5_sym', 0.2, [16], 20000),
-        # ('CHEM_5_sym', 0.2, [16], 20000),
-        # ('GeoLifeNoScale_5_sym', 0.2, [16], 5000),
-        # ('grid_1000_10000_sym', 0.2, [16], 20000),
-        # ('grid_1000_10000_03_sym', 0.2, [16], 20000),
-        # ('twitter_sym', 0.02, [16], 1000),
-        ('Germany_sym', 0.2, [16], 20000),
-        ('RoadUSA_sym', 0.2, [16], 20000),
+        ('HepPh_sym', [2],),
+        ('Epinions1_sym', [4],),
+        ('Slashdot_sym', [8],),
+        ('DBLP_sym', [16],),
+        ('Youtube_sym', [16]),
+        ('com-orkut_sym', [16]),
+        ('soc-LiveJournal1_sym', [16]),
+        ('twitter_sym', [16]),
+        ('Germany_sym', [16],),
+        ('RoadUSA_sym', [16],),
+        ('HT_5_sym', [16],),
+        ('Household.lines_5_sym', [16],),
+        ('CHEM_5_sym', [16],),
+        ('GeoLifeNoScale_5_sym', [16]),
+        ('grid_1000_10000_sym', [16],),
+        ('grid_1000_10000_03_sym', [16],),
     ]
     res = {}
-    log_path = 'logs_original_wic'
+    log_path = 'logs_new/logs_wic'
     ff = open('temp.txt', 'w')
-    for graph, w, workers_list, iter in aa:
+    for graph, workers_list, in aa:
         for workers in workers_list:
             eps = 0.5
             a = {}
@@ -33,7 +33,8 @@ def main():
                 logfile = f'./{log_path}/{name}.txt'
                 memfile = f'./{log_path}/{name}_mem.txt'
                 resfile = f'./{log_path}/{name}_res.txt'
-                if not os.path.exists(resfile):
+                finishfile = f'./{log_path}/{name}_finish.txt'
+                if not os.path.exists(finishfile):
                     continue
                 print('loading:', logfile, memfile, resfile)
                 f1 = open(logfile, 'r')
@@ -68,8 +69,8 @@ def main():
                 a[n_thread] = (time, time - select_time, select_time, mem, inf)
             if len(a) > 0:
                 res = f'{graph}'
-                for id in [0,1,2,3,4]:
-                    for n_thread in [192]:#, 96, 48, 24, 16, 8, 4, 2, 1]:
+                for n_thread in [96, 48, 24, 16, 8, 4, 2, 1]:
+                    for id in [1,2,0,3,4]:
                         if n_thread in a:
                             res += ' ' + str(a[n_thread][id])
                 ff.write(res + '\n')
